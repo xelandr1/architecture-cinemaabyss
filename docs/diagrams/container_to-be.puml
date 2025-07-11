@@ -1,0 +1,47 @@
+﻿@startuml
+
+!include <C4/C4_Container>
+
+System_Ext(externalPaymentSystem, "Платежная система")
+System_Ext(externalRecommendationSystem, "Рекомендательная система")
+
+System_Boundary(bound, "КиноБездна") {
+    Container(userService, "Управление пользователями сервис")
+    Container(paymentService, "Платежи сервис")
+    Container(videoService, "Доступ к видео сервис")
+    Container(subscriptionService, "Подписки сервис")
+    Container(discountService, "Скидки сервис")
+    Container(movieService, "Управление контентом сервис")
+    
+    
+    ContainerDb(userDb, "Управление пользователями DB")
+    ContainerDb(paymentDb, "Платежи DB")
+    ContainerDb(videoDb, "Доступ к видео DB")
+    ContainerDb(subscriptionDb, "Подписки DB")
+    ContainerDb(discountDb, "Скидки DB")
+    ContainerDb(movieDb, "Управление контентом DB")
+    
+    ContainerQueue(kafka, "Брокер сообщений", "Kafka")
+    
+    Rel(userService, userDb, "")
+    Rel(paymentService, paymentDb, "")
+    Rel(videoService, videoDb, "")
+    Rel(eventsService, subscriptionDb, "")
+    Rel(discountService, discountDb, "")
+    Rel(movieService, movieDb, "")
+    
+    Rel(kafka, movieService, "")
+    Rel(movieService, videoService, "")
+    
+    Rel(userService, eventsService, "")
+    Rel(eventsService, discountService, "")
+    Rel(userService, movieService, "")
+    Rel(eventsService, paymentService, "")
+    
+}
+
+Rel(paymentService, externalPaymentSystem, "")
+Rel(externalRecommendationSystem, kafka, "")
+
+
+@enduml
